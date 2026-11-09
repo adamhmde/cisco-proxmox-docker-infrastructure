@@ -1,0 +1,213 @@
+! =====================================================================
+! SW1 - Cisco Catalyst 2960 (IOS 12.2) - sanitized running configuration
+! Sanitized for publication:
+!   - Password hashes replaced with <REDACTED>
+!   - Self-signed certificate chain removed (public cert, no key material)
+!   - Empty "!" separators trimmed
+! =====================================================================
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname SW1
+!
+boot-start-marker
+boot-end-marker
+!
+no logging console
+enable secret 5 <REDACTED>
+!
+username adam privilege 15 secret 5 <REDACTED>
+!
+no aaa new-model
+system mtu routing 1500
+!
+no ip domain-lookup
+ip domain-name lab.local
+!
+crypto pki trustpoint TP-self-signed-1351299072
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1351299072
+ revocation-check none
+ rsakeypair TP-self-signed-1351299072
+!
+! [self-signed certificate chain removed]
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+ip ssh version 2
+!
+interface FastEthernet0/1
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/2
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/3
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/4
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/5
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/6
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/7
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/8
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/9
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/10
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/11
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/12
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/13
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/14
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/15
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/16
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/17
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/18
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/19
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/20
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/21
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/22
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/23
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/24
+ switchport access vlan 999
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet0/1
+ description UPLINK-TO-ROUTER-LAN-PORT
+ switchport trunk native vlan 10
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+!
+interface GigabitEthernet0/2
+ description CONNECTION-TO-PROXMOX-PC-HOST
+ switchport trunk native vlan 10
+ switchport trunk allowed vlan 10,20
+ switchport mode trunk
+ spanning-tree portfast trunk
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ ip address 10.10.10.2 255.255.255.0
+!
+ip default-gateway 10.10.10.1
+no ip http server
+no ip http secure-server
+access-list 23 permit 10.10.10.0 0.0.0.255
+no cdp run
+no cdp tlv location
+no cdp tlv app
+banner login ^C
+***************************************************************
+  WARNING: Authorized access only.
+  This device is privately owned. Unauthorized access is
+  prohibited. All activity may be monitored and logged.
+  Disconnect immediately if you are not an authorized user.
+***************************************************************
+^C
+!
+line con 0
+ login local
+line vty 0 4
+ access-class 23 in
+ login local
+ transport input ssh
+line vty 5 15
+ access-class 23 in
+ login local
+ transport input ssh
+!
+end

@@ -1,0 +1,193 @@
+! =====================================================================
+! R1 - Cisco 891F (IOS 15.8) - sanitized running configuration
+! Sanitized for publication:
+!   - Password hash and serial number replaced with <REDACTED>
+!   - Self-signed certificate chain removed (public cert, no key material)
+!   - Platform default MGCP lines and empty "!" separators trimmed
+! =====================================================================
+!
+version 15.8
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 51200 warnings
+no logging console
+!
+no aaa new-model
+!
+crypto pki trustpoint TP-self-signed-609331443
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-609331443
+ revocation-check none
+ rsakeypair TP-self-signed-609331443
+!
+! [self-signed certificate chain removed]
+!
+ip dhcp excluded-address 10.10.10.1 10.10.10.10
+ip dhcp excluded-address 10.10.20.1 10.10.20.10
+!
+ip dhcp pool MANAGEMENT_POOL
+ network 10.10.10.0 255.255.255.0
+ default-router 10.10.10.1
+ dns-server 1.1.1.1 8.8.8.8
+!
+ip dhcp pool SERVER_ZONE_POOL
+ network 10.10.20.0 255.255.255.0
+ default-router 10.10.20.1
+ dns-server 10.10.20.2
+!
+no ip domain lookup
+ip domain name lab.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+license udi pid C891F-K9 sn <REDACTED>
+!
+username adam privilege 15 secret 9 <REDACTED>
+!
+redundancy
+!
+no cdp run
+!
+interface BRI0
+ no ip address
+ encapsulation hdlc
+ shutdown
+ isdn termination multidrop
+!
+interface FastEthernet0
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1
+ description DOWNLINK-TO-SWITCH-PORT-G0/1
+ switchport trunk native vlan 10
+ switchport trunk allowed vlan 1,2,10,20,1001-1005
+ switchport mode trunk
+ no ip address
+!
+interface GigabitEthernet2
+ no ip address
+ shutdown
+!
+interface GigabitEthernet3
+ no ip address
+ shutdown
+!
+interface GigabitEthernet4
+ no ip address
+ shutdown
+!
+interface GigabitEthernet5
+ no ip address
+ shutdown
+!
+interface GigabitEthernet6
+ no ip address
+ shutdown
+!
+interface GigabitEthernet7
+ no ip address
+ shutdown
+!
+interface GigabitEthernet8
+ description WAN-TO-ISP
+ ip address dhcp
+ ip nat outside
+ no ip virtual-reassembly in
+ duplex auto
+ speed auto
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ description GATEWAY-FOR-VLAN-10
+ ip address 10.10.10.1 255.255.255.0
+ ip nat inside
+ no ip virtual-reassembly in
+!
+interface Vlan20
+ description GATEWAY-FOR-VLAN-20
+ ip address 10.10.20.1 255.255.255.0
+ ip access-group BLOCK_SERVER_TRAFFIC in
+ ip nat inside
+ no ip virtual-reassembly in
+!
+interface Async3
+ no ip address
+ encapsulation slip
+!
+ip forward-protocol nd
+no ip http server
+ip http access-class 23
+ip http authentication local
+no ip http secure-server
+ip http timeout-policy idle 60 life 86400 requests 10000
+!
+ip nat inside source list NAT_TRAFFIC interface GigabitEthernet8 overload
+ip route 0.0.0.0 0.0.0.0 GigabitEthernet8 dhcp
+ip ssh version 2
+!
+ip access-list standard NAT_TRAFFIC
+ permit 10.10.10.0 0.0.0.255
+ permit 10.10.20.0 0.0.0.255
+!
+ip access-list extended BLOCK_SERVER_TRAFFIC
+ permit tcp 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255 established
+ permit udp 10.10.20.0 0.0.0.255 eq domain 10.10.10.0 0.0.0.255
+ permit icmp 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255 echo-reply
+ permit icmp 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255 unreachable
+ deny   ip 10.10.20.0 0.0.0.255 10.10.10.0 0.0.0.255
+ permit ip 10.10.20.0 0.0.0.255 any
+!
+ipv6 ioam timestamp
+!
+access-list 23 permit 10.10.10.0 0.0.0.255
+!
+control-plane
+!
+banner login ^C
+***************************************************************
+  WARNING: Authorized access only.
+  This device is privately owned. Unauthorized access is
+  prohibited. All activity may be monitored and logged.
+  Disconnect immediately if you are not an authorized user.
+***************************************************************
+^C
+!
+line con 0
+ login local
+ no modem enable
+line aux 0
+line 3
+ speed 115200
+line vty 0 4
+ access-class 23 in
+ privilege level 15
+ login local
+ transport input ssh
+line vty 5 15
+ access-class 23 in
+ privilege level 15
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+!
+end
